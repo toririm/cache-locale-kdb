@@ -13,8 +13,14 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["<all_urls>"],
-			"js": ["./content/scripts.tsx"]
+			"matches": ["https://twins.tsukuba.ac.jp/*"],
+			"js": ["./content/twins/scripts.ts"]
+		},
+		{
+			"matches": [
+				"https://make-it-tsukuba.github.io/alternative-tsukuba-kdb/*"
+			],
+			"js": ["./content/alt-kdb/scripts.ts"]
 		}
 	],
 	"action": {
@@ -23,5 +29,6 @@
 			"48": "images/extension_48.png"
 		}
 	},
+	"permissions": ["storage", "unlimitedStorage"],
 	"author": "Your Name"
 }
