@@ -17,5 +17,11 @@
 			"js": ["./content/scripts.tsx"]
 		}
 	],
+	"action": {
+		"default_popup": "./popup/index.html",
+		"default_icon": {
+			"48": "images/extension_48.png"
+		}
+	},
 	"author": "Your Name"
 }
