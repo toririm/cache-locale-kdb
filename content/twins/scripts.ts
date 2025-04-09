@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import type { kdbDataColumns } from "../../commons/model";
+import type { KdbRecord } from "../../commons/model";
 let unmount: () => void;
 
 // @ts-ignore
@@ -30,6 +30,7 @@ function initial() {
 		console.log("ログインされていません");
 	} else {
 		download().then((data) => {
+			console.log("data", data);
 			chrome.storage.local
 				.set({ kdbData: data, renewedAt: new Date().toJSON() })
 				.catch((err) => console.error(err));
@@ -51,9 +52,12 @@ async function download() {
 function parseKdbExcel(workbook: XLSX.WorkBook) {
 	const sheetName = workbook.SheetNames[0];
 	const worksheet = workbook.Sheets[sheetName];
-	const data: Record<kdbDataColumns, string>[] =
-		XLSX.utils.sheet_to_json(worksheet);
+	const data: KdbRecord[] = XLSX.utils.sheet_to_json(worksheet);
 	return data.map((row) => {
-		return { number: row.科目番号, room: row.教室 };
+		const rowObj = Object.entries(row);
+		return {
+			number: rowObj[0][1],
+			room: rowObj[7][1],
+		};
 	});
 }
