@@ -23,6 +23,8 @@ export const PopupApp: FunctionComponent = () => {
 			if (typeof uploadedAt === "string") {
 				const renewedDate = new Date(Date.parse(renewedAt));
 				setCacheInfo({ uploadedAt, renewedAt: renewedDate.toLocaleString() });
+			} else {
+				setCacheInfo(null);
 			}
 		}
 		callback();
