@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx";
+import * as htmlparser2 from "htmlparser2";
 import type { KdbRecord } from "../../commons/model";
 let unmount: () => void;
 
@@ -26,24 +27,42 @@ function initial() {
 	const params = new URLSearchParams(queryString);
 	const page = params.get("page");
 
-	if (page !== "main") {
-		console.log("ログインされていません");
-	} else {
-		download().then((data) => {
-			console.log("data", data);
-			chrome.storage.local
-				.set({ kdbData: data, renewedAt: new Date().toJSON() })
-				.catch((err) => console.error(err));
-		});
-	}
+	download().then((data) => {
+		console.log("data", data);
+		chrome.storage.local
+			.set({ kdbData: data, renewedAt: new Date().toJSON() })
+			.catch((err) => console.error(err));
+	});
 
 	return () => {};
 }
 
 async function download() {
-	const response = await fetch(
-		"/campusweb/campussquare.do?_flowId=SDW-filerefer-flow&fileId=52",
-	);
+	const response = await fetch("/ct/page_3734847c3734782");
+	const html = await response.text();
+	console.log(html);
+	let url = undefined;
+	const parser = new htmlparser2.Parser({
+		onopentag(name, attributes) {
+			if (name === "a" && attributes.href?.includes("kdb_2025--ja.xlsx")) {
+				console.log("Found link to kdb_2025--ja.xlsx");
+				url = attributes.href;
+			}
+		},
+	});
+
+	parser.write(html);
+	parser.end();
+	if (!url) {
+		console.error("URL not found");
+		return [];
+	}
+	return downloadFile(url);
+}
+
+async function downloadFile(url: string) {
+	console.log(url);
+	const response = await fetch(url);
 	const file = await response.arrayBuffer();
 	const workbook = XLSX.read(file);
 	return parseKdbExcel(workbook);
