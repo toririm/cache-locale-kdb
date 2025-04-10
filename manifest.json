@@ -13,8 +13,8 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["https://twins.tsukuba.ac.jp/*"],
-			"js": ["./content/twins/scripts.ts"]
+			"matches": ["https://manaba.tsukuba.ac.jp/*"],
+			"js": ["./content/manaba/scripts.ts"]
 		},
 		{
 			"matches": [

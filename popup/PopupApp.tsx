@@ -6,17 +6,23 @@ import {
 } from "react";
 
 export const PopupApp: FunctionComponent = () => {
-	const [renewedAt, setRenewedAt] = useState<null | Date>(null);
+	const [cacheInfo, setCacheInfo] = useState<null | {
+		uploadedAt: string;
+		renewedAt: string;
+	}>(null);
 
 	useEffect(() => {
 		async function callback() {
-			const res = await chrome.storage.local.get(["kdbData", "renewedAt"]);
+			const res = await chrome.storage.local.get([
+				"kdbData",
+				"renewedAt",
+				"uploadedAt",
+			]);
 			const renewedAt = res.renewedAt;
-			if (renewedAt) {
+			const uploadedAt = res.uploadedAt;
+			if (typeof uploadedAt === "string") {
 				const renewedDate = new Date(Date.parse(renewedAt));
-				setRenewedAt(renewedDate);
-			} else {
-				setRenewedAt(null);
+				setCacheInfo({ uploadedAt, renewedAt: renewedDate.toLocaleString() });
 			}
 		}
 		callback();
@@ -33,9 +39,17 @@ export const PopupApp: FunctionComponent = () => {
 			<h1 className="title">教室情報キャッシュ</h1>
 			<div>
 				<div>
-					{renewedAt === null
-						? "❌ twinsにログインして教室情報をローカルに保存できます"
-						: `⭕️ ${renewedAt.toLocaleString()} に最終更新`}
+					{cacheInfo === null ? (
+						<>
+							<div>❌ manabaにログインして教室情報をローカルに保存できます</div>
+							<div>ただし、KdB.classroom のコース登録が必要です</div>
+						</>
+					) : (
+						<>
+							<div>{`⭕️ ${cacheInfo.uploadedAt} にアップロードされたデータを使用中`}</div>
+							<div>{`（${cacheInfo.renewedAt} 最終確認）`}</div>
+						</>
+					)}
 				</div>
 				<button type="button" className="delete-cache" onClick={deleteCache}>
 					キャッシュを削除する
