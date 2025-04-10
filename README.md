@@ -14,8 +14,9 @@
 1. manaba にログインすると、教室情報が取得され、ローカルに保存されます
 2. kdbもどきにアクセスすると、教室情報が補完されて表示されます
 
-<img width="517" alt="スクリーンショット 2025-04-10 19 36 15" src="https://github.com/user-attachments/assets/f0c972d9-9a90-4e14-9862-5249e6dc98c2" />
-<img width="517" alt="スクリーンショット 2025-04-10 19 36 05" src="https://github.com/user-attachments/assets/5275286a-880d-4c8c-8ada-f9b2503c269c" />
+<img width="517" alt="スクリーンショット 2025-04-10 19 46 48" src="https://github.com/user-attachments/assets/4f29fb2d-baea-470f-b7a2-a022b1a6234c" />
+<img width="517" alt="スクリーンショット 2025-04-10 19 46 22" src="https://github.com/user-attachments/assets/d012ae3b-67f3-4d57-a0bf-c855a7261c52" />
+
 
 ## 免責
 
