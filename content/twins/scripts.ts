@@ -42,7 +42,7 @@ function initial() {
 
 async function download() {
 	const response = await fetch(
-		"/campusweb/campussquare.do?_flowId=SDW-filerefer-flow&fileId=41",
+		"/campusweb/campussquare.do?_flowId=SDW-filerefer-flow&fileId=52",
 	);
 	const file = await response.arrayBuffer();
 	const workbook = XLSX.read(file);
