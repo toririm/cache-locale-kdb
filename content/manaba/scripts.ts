@@ -28,9 +28,14 @@ function initial() {
 	const page = params.get("page");
 
 	download().then((data) => {
-		console.log("data", data);
+		console.log("Downloaded data", data.data);
+		console.log("Uploaded at", data.uploadedAt);
 		chrome.storage.local
-			.set({ kdbData: data, renewedAt: new Date().toJSON() })
+			.set({
+				kdbData: data.data,
+				renewedAt: new Date().toJSON(),
+				uploadedAt: data.uploadedAt,
+			})
 			.catch((err) => console.error(err));
 	});
 
@@ -40,13 +45,19 @@ function initial() {
 async function download() {
 	const response = await fetch("/ct/page_3734847c3734782");
 	const html = await response.text();
-	console.log(html);
 	let url = undefined;
+	let uploadedAt: undefined | string = undefined;
 	const parser = new htmlparser2.Parser({
 		onopentag(name, attributes) {
 			if (name === "a" && attributes.href?.includes("kdb_2025--ja.xlsx")) {
 				console.log("Found link to kdb_2025--ja.xlsx");
 				url = attributes.href;
+			}
+		},
+		ontext(text) {
+			if (text.includes("kdb_2025--ja.xlsx - ")) {
+				console.log("Found uploaded date");
+				uploadedAt = text.split(" - ")[1].trim();
 			}
 		},
 	});
@@ -55,9 +66,10 @@ async function download() {
 	parser.end();
 	if (!url) {
 		console.error("URL not found");
-		return [];
+		return { data: [], uploadedAt: undefined };
 	}
-	return downloadFile(url);
+	const data = await downloadFile(url);
+	return { data, uploadedAt };
 }
 
 async function downloadFile(url: string) {
@@ -72,7 +84,7 @@ function parseKdbExcel(workbook: XLSX.WorkBook) {
 	const sheetName = workbook.SheetNames[0];
 	const worksheet = workbook.Sheets[sheetName];
 	const data: KdbRecord[] = XLSX.utils.sheet_to_json(worksheet);
-	return data.map((row) => {
+	return data.map<{ number: string; room: string }>((row) => {
 		const rowObj = Object.entries(row);
 		return {
 			number: rowObj[0][1],
