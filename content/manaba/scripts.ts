@@ -23,9 +23,6 @@ console.log("Hello from content script");
 
 function initial() {
 	console.log("initial called");
-	const queryString = window.location.search;
-	const params = new URLSearchParams(queryString);
-	const page = params.get("page");
 
 	download().then((data) => {
 		console.log("Downloaded data", data.data);
